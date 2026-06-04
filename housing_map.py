@@ -3,10 +3,13 @@ import pandas as pd
 import geopandas as gpd
 import folium
 from mapclassify import NaturalBreaks
+from dotenv import load_dotenv
+import os
 
-# ── 1. CONFIGURATION ──────────────────────────────────────────────
-API_KEY   = "REDACTED"      # paste your Census API key
-STATE     = "27"                 # 27 = Minnesota, change to your state
+load_dotenv()
+# --- 1. Config
+API_KEY = os.getenv("CENSUS_API_KEY")    # My masked API key
+STATE     = "27"                 # FIPS for Minnesota
 YEAR      = 2022
 
 # ACS variables we want:
@@ -26,8 +29,10 @@ url = (
 )
 
 response = requests.get(url)
-data     = response.json()
 
+print(response.status_code)
+print(response.text)
+data     = response.json()
 # First row is column headers
 df = pd.DataFrame(data[1:], columns=data[0])
 
@@ -50,14 +55,14 @@ print(f"Pulled {len(df)} counties")
 print(df[["NAME","median_home_value"]].head())
 
 # ── 4. GET COUNTY SHAPEFILE (GEOGRAPHIC BOUNDARIES) ───────────────
-# Census TIGER shapefile for counties - no download needed, reads directly
+# Census TIGER shapefile for counties 
 shapefile_url = (
     "https://www2.census.gov/geo/tiger/GENZ2022/shp/"
     "cb_2022_us_county_500k.zip"
 )
 gdf = gpd.read_file(shapefile_url)
 
-# Filter to our state and create matching FIPS
+# Filters to state(s) specified by FIPS code
 gdf = gdf[gdf["STATEFP"] == STATE].copy()
 gdf["FIPS"] = gdf["STATEFP"] + gdf["GEOID"].str[-3:]
 
@@ -85,7 +90,7 @@ folium.Choropleth(
     bins        = 6,
 ).add_to(m)
 
-# Clickable tooltips showing detail for each county
+# Creates tooltips showing detail for each county
 folium.GeoJson(
     merged.__geo_interface__,
     style_function  = lambda x: {"fillOpacity": 0, "weight": 0},
