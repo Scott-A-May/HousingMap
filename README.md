@@ -10,7 +10,12 @@ This project pulls 2022 ACS 5-Year Estimates from the U.S. Census Bureau API for
 - Data sourced from the U.S. Census Bureau ACS 5-Year Estimates (2022)
 - Geography: Minnesota counties (87 total)
 - Interactive map saved as `housing_opportunity_map.html`
-- Folium maps require a live environment to render interactively — view the live map via GitHub Pages
+
+## Live Demo
+
+👉 [View the Interactive Map](https://scott-a-may.github.io/HousingMap/)
+
+> Folium maps require a live environment to render interactively — click the link above to explore the full interactive map in your browser.
 
 ## Data Source
 
